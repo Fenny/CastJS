@@ -5,34 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rangeslider.js/2.3.2/rangeslider.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.3.1/styles/default.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.3.1/styles/an-old-hope.min.css">
-    <link rel="stylesheet" href="/css/style.css">
-    <title>Cast.js Sender 📺 Demo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/default.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/an-old-hope.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Favicons -->
+    <meta name="apple-mobile-web-app-title" content="Cast.js" />
+    <link rel="apple-touch-icon" sizes="180x180" href="media/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="media/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="media/favicon/favicon-16x16.png">
+    <link rel="manifest" href="media/favicon/site.webmanifest">
+
+
     <!-- Primary Meta Tags -->
-<title>Cast.js - Chromecast Sender Library for the Browser</title>
-<meta name="title" content="Cast.js - Chromecast Sender Library for the Browser">
-<meta name="description" content="Castjs provides simple events and functions to communicate with chromecast devices from the browser.
-This library works in chrome, opera, brave, firefox and vivaldi see https://github.com/castjs/castjs">
+    <title>Cast.js / Chromecast Library for the Browser</title>
+    <meta name="title" content="Cast.js 📺 Chromecast Library for the Browser" />
+    <meta name="description" content="Castjs provides simple events and functions to communicate with chromecast devices from the browser.
+    This library works in chrome, opera, brave, firefox and vivaldi see https://github.com/castjs/castjs" />
+    <meta name="keywords" content="chromecast, chromecast js, cast library, chromecast browser, chromecast js library, chromecast sender library, cast, cast js, chromecast media browser, chromecast browser" />
 
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://metatags.io/">
-<meta property="og:title" content="Cast.js - Chromecast Sender Library for the Browser">
-<meta property="og:description" content="Castjs provides simple events and functions to communicate with chromecast devices from the browser.
-This library works in chrome, opera, brave, firefox and vivaldi see https://github.com/castjs/castjs">
-<meta property="og:image" content="https://metatags.io/assets/meta-tags-16a33a6a8531e519cc0936fbba0ad904e52d35f34a46c97a2c9f6f7dd7d336f2.png">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://castjs.io" />
+    <meta property="og:title" content="Cast.js / Chromecast Library for the Browser" />
+    <meta property="og:description" content="Castjs provides simple events and functions to communicate with chromecast devices from the browser.
+    This library works in chrome, opera, brave, firefox and vivaldi see https://github.com/castjs/castjs" />
+    <meta property="og:image" content="media/banner.png" />
 
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://metatags.io/">
-<meta property="twitter:title" content="Cast.js - Chromecast Sender Library for the Browser">
-<meta property="twitter:description" content="Castjs provides simple events and functions to communicate with chromecast devices from the browser.
-This library works in chrome, opera, brave, firefox and vivaldi see https://github.com/castjs/castjs">
-<meta property="twitter:image" content="https://metatags.io/assets/meta-tags-16a33a6a8531e519cc0936fbba0ad904e52d35f34a46c97a2c9f6f7dd7d336f2.png">
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://castjs.io" />
+    <meta property="twitter:title" content="Cast.js / Chromecast Library for the Browser" />
+    <meta property="twitter:description" content="Castjs provides simple events and functions to communicate with chromecast devices from the browser.
+    This library works in chrome, opera, brave, firefox and vivaldi see https://github.com/castjs/castjs" />
+    <meta property="twitter:image" content="media/banner.png" />
+
+
   </head>
   <body class="disabled">
     <div class="container">
@@ -43,7 +55,7 @@ This library works in chrome, opera, brave, firefox and vivaldi see https://gith
       <div class="col">
 
         <div class="media">
-          <img src="/media/poster.jpg" class="poster">
+          <img src="media/poster.jpg" class="poster">
           <div class="title">Sintel (2010)</div>
           <div class="description">Third Open Movie by Blender Foundation</div>
           <div class="genres">
@@ -100,7 +112,7 @@ This library works in chrome, opera, brave, firefox and vivaldi see https://gith
       <pre>
         <code class="code language-js minus-margin">
 // Create new Castjs instance
-const cjs = new Castjs();
+const cast = new Castjs();
 
 // Optional metadata
 var metadata = {
@@ -119,19 +131,23 @@ var metadata = {
 
 // Wait for user interaction
 $('#cast').on('click', () => {
-  if (cjs.available) {
-    cjs.cast('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4', metadata)
+  if (cast.available) {
+    cast.cast('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4', metadata)
   }
 })
         </code>
       </pre>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.slim.min.js"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/rangeslider.js/2.3.2/rangeslider.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.3.1/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/castjs/5.3.0/cast.min.js" crossorigin="anonymous"></script>
-    <script src="/js/player.js" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js"></script>
+
+    <script src="../cast.js?v=65443333454s333s34445453" crossorigin="anonymous"></script>
+    <script src="js/player.js?v=4444253444433" crossorigin="anonymous"></script>
     <script>
       var val = '<script src=\"https://cdnjs.cloudflare.com/ajax/libs/castjs/5.3.0/cast.min.js\">\<\/script>'
       val = val.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");

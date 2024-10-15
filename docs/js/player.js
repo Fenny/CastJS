@@ -1,109 +1,120 @@
-function debug(msg) {
-  var d = new Date();
-  var n = d.toLocaleTimeString().split(' ')[0]
-  if (typeof msg === 'string') {
-    $('#debug').append('[' + n + '] ' + msg + '\n')
-  } else {
-    $('#debug').append('[' + n + '] ' + JSON.stringify(msg) + '\n')
-  }
-  var textarea = document.getElementById('debug');
+function debug(key, value) {
+  const fixedWidth = 15; // Define the width for key formatting
+  const d = new Date();
+  const n = d.toLocaleTimeString([], { minute: '2-digit', second: '2-digit' });
+
+  // Format key with fixed width
+  const formattedKey = typeof key === 'string' ? key.padEnd(fixedWidth) : JSON.stringify(key).padEnd(fixedWidth);
+  const formattedValue = typeof value === 'string' ? value : JSON.stringify(value);
+
+  // Append to debug element
+  $('#debug').append(`[${n}] ${formattedKey} > ${formattedValue}\n`);
+
+  // Scroll to the bottom of textarea
+  const textarea = document.getElementById('debug');
   textarea.scrollTop = textarea.scrollHeight;
 }
-debug('debugging\t: enabled')
+debug('debugging', 'enabled')
 
-var cjs = new Castjs({
+var cast = new Castjs({
   joinpolicy: 'origin_scoped'
 });
 
-cjs.on('event', (e) => {
+cast.on('event', (e) => {
   if (e === 'statechange') {
-    debug(e + '\t: ' + cjs.state)
+    debug(e, cast.state)
   } else if (e === 'volumechange') {
-    debug(e + '\t: ' + cjs.volumeLevel)
+    debug(e, cast.volumeLevel)
   } else if (e === 'timeupdate') {
-    debug(e + '\t: ' + cjs.timePretty + ' - ' + cjs.durationPretty)
-  } else if (e === 'playing') {
-    debug(e + '\t: ' + cjs.title)
+    debug(e, cast.timePretty + ' - ' + cast.durationPretty)
+  } else if (e === 'play') {
+    debug(e, cast.media.title)
   } else if (e === 'connect') {
-    debug(e + '\t: ' + cjs.device)
+    debug(e, cast.device)
   } else if (e === 'available') {
-    debug(e + '\t: castjs ' + cjs.version)
+    debug(e, 'casting supported')
   } else if (e === 'buffering') {
-    debug(e + '\t: ' + cjs.timePretty)
+    debug(e, cast.timePretty)
   } else if (e === 'mute') {
-    debug(e + '\t\t: ' + cjs.volumeLevel)
+    debug(e, cast.volumeLevel)
   } else if (e === 'unmute') {
-    debug(e + '\t: ' + cjs.volumeLevel)
+    debug(e, cast.volumeLevel)
   } else if (e === 'pause') {
-    debug(e + '\t\t: ' + cjs.timePretty)
+    debug(e, cast.timePretty)
   } else if (e === 'disconnect') {
-    debug(e + '\t: ' + cjs.device)
+    debug(e, cast.device)
+  } else if (e === 'ended') {
+    debug(e, 'Media ended')
   } else if (e === 'subtitlechange') {
-    for (var i in cjs.subtitles) {
-        if (cjs.subtitles[i].active) {
-            debug('subtitle\t: ' + cjs.subtitles[i].label)
+    for (var i in cast.media.subtitles) {
+        if (cast.media.subtitles[i].active) {
+            debug('subtitle', cast.media.subtitles[i].label)
             break;
         }
     }
   } else {
-    debug(e)
+    debug('unknown event', e)
   }
 })
 
-cjs.on('available', () => {
+cast.on('statechange', () => {
+  $('#state').text(cast.device + ': ' + cast.state)
+})
+
+cast.on('available', () => {
   $('#cast').removeClass('disabled')
 })
 
-cjs.on('connect', () => {
+cast.on('connect', () => {
   $('body').removeClass('disabled')
   $('body').addClass('connected')
-  if (cjs.paused) {
+  if (cast.paused) {
     $('#play').removeClass('fa-pause').addClass('fa-play')
   } else {
     $('#play').removeClass('fa-play').addClass('fa-pause')
   }
 })
 
-cjs.on('mute', () => {
+cast.on('mute', () => {
   $('#mute').removeClass('fa-volume-up').addClass('fa-volume-mute')
 })
 
-cjs.on('unmute', () => {
+cast.on('unmute', () => {
   $('#mute').removeClass('fa-volume-mute').addClass('fa-volume-up')
 })
 
-cjs.on('statechange', () => {
-  $('#state').text(cjs.device + ': ' + cjs.state)
+cast.on('statechange', () => {
+  $('#state').text(cast.device + ': ' + cast.state)
 })
 
-cjs.on('buffering', () => {
+cast.on('buffering', () => {
   $('body').addClass('disabled');
 })
 
 
-cjs.on('playing', () => {
+cast.on('play', () => {
   $('body').removeClass('disabled');
   $('#play').removeClass('fa-play').addClass('fa-pause')
 })
 
-cjs.on('pause', () => {
+cast.on('pause', () => {
   $('body').removeClass('disabled');
   $('#play').removeClass('fa-pause').addClass('fa-play')
 })
 
-cjs.on('timeupdate', () => {
-  $('#time').text(cjs.timePretty);
-  $('#duration').text(cjs.durationPretty);
-  slider.attr('value', cjs.progress);
+cast.on('timeupdate', () => {
+  $('#time').text(cast.timePretty);
+  $('#duration').text(cast.durationPretty);
+  slider.attr('value', cast.progress);
   slider.rangeslider('update', true);
 })
-cjs.on('disconnect', () => {
+cast.on('disconnect', () => {
   $('body').addClass('disabled');
   $('body').removeClass('connected');
   
 })
-cjs.on('error', (err) => {
-  debug('error\t\t: ' + err)
+cast.on('error', (err) => {
+  debug('error', err)
 })
 
 var metadata = {
@@ -121,65 +132,65 @@ var metadata = {
 }
 
 $('#cast').on('click', () => {
-  if (cjs.connected) {
-    cjs.disconnect()
-  } else if (cjs.available) {
-    cjs.cast('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4', metadata)
+  if (cast.connected) {
+    cast.disconnect()
+  } else if (cast.available) {
+    cast.session('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4', metadata)
   }
 })
 
 $('.jq-dropdown-menu').on('click', 'a', function(e) {
   e.preventDefault();
   var index = $(this).attr('href')
-  cjs.subtitle(index)
+  cast.subtitle(index)
   $('.jq-dropdown-menu a').removeClass('active')
   $(this).addClass('active')
 })
 
 $('#mute').on('click', () => {
     if ($('#mute').hasClass('fa-volume-up')) {
-      cjs.mute()
+      cast.mute()
       $('#mute').removeClass('fa-volume-up').addClass('fa-volume-mute')
     } else {
-      cjs.unmute()
+      cast.unmute()
       $('#mute').removeClass('fa-volume-mute').addClass('fa-volume-up')
     }
 })
 
 $('#play').on('click', () => {
     if ($('#play').hasClass('fa-play')) {
-      cjs.play();
+      cast.play();
       $('#play').removeClass('fa-play').addClass('fa-pause')
     } else {
-      cjs.pause();
+      cast.pause();
       $('#play').removeClass('fa-pause').addClass('fa-play')
     }
 })
 
 $('#stop').on('click', () => {
-    cjs.disconnect();
+    cast.disconnect();
 })
 
 $('#back').on('click', () => {
-  var goback = cjs.time - 30;
+  var goback = cast.time - 30;
   if (goback < 1) {
     goback = 0;
   }
-  cjs.seek(goback)
+  cast.seek(goback)
 })
 $('#forward').on('click', () => {
-  var goforward = cjs.time + 30;
-  if (goforward >= cjs.duration) {
-    goforward = cjs.duration;
+  var goforward = cast.time + 30;
+  if (goforward >= cast.duration) {
+    goforward = cast.duration;
   }
-  cjs.seek(goforward)
+  cast.seek(goforward)
 })
 
 var slider = $('input[type="range"]').rangeslider({
   polyfill: false,
   onSlideEnd: function(pos, val) {
-    if (cjs.connected) {
-      cjs.seek(val, true);
+    if (cast.connected) {
+      cast.seek(val, true);
     }
   }
 });
